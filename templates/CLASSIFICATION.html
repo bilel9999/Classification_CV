@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/responsive.css') }}">
+  <title>PDF Processor</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f6f9fc;
+      margin: 0;
+      padding: 0;
+ 
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: #3498db;
+      font-size: 42px;
+      margin-bottom: 20px;
+    }
+
+    form {
+      position: relative;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ecf0f1;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      
+      margin-bottom: 20px;
+    
+    }
+
+
+
+    input[type="file"] {
+      display: none;
+    }
+
+    label {
+      background: #3498db;
+      color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 0.3s ease;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    label:hover {
+      background: #2980b9;
+    }
+
+    button {
+      background: #27ae60;
+      color: #fff;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #219352;
+    }
+
+    h2 {
+      color: #3498db;
+      margin-top: 20px;
+      font-size: 28px;
+    }
+
+    p {
+      color: #555;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .result-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .result-container > div.div1 {
+      background: #ecf0f1;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      text-align: left;
+      max-width: 60vh;
+      width: 100%;
+      transition: transform 0.3s ease-in-out;
+      margin: 0 20px 20px 0;
+    }
+
+ 
+
+    .result-container iframe {
+      width: 70vh;
+      height: 90vh;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 15px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #3498db;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <h1>PDF Processor</h1>
+    <label for="file">Select a PDF file</label>
+    <input type="file" id="file" name="file" accept=".pdf" required />
+    <button type="submit">Upload and Process</button>
+  </form>
+
+  {% if result %} 
+  <div class="result-container">
+    <div class="div1">
+        <h2>Result: Resume Analysis</h2>
+        <table>
+          <tr>
+              <td> name :</td>
+              <td> {{result["name"]}} </td>
+          </tr>
+          <tr>
+              <td> e-mail : </td>
+              <td> {{result["email"]}} </td>
+          </tr>
+          <tr>
+              <td>  mobile_number : </td>
+              <td>{{result["mobile_number"]}}</td>
+          </tr>
+      </table>
+        <h2>Skills:</h2>
+        <p>{{ result["data"] }}</p>
+        <h2>Prediction:</h2>
+        <p><b>{{ result["prediction"][0][1] }}</b></p>
+        <table>
+          <thead>
+            <tr>
+              <th>Job Predictions</th>
+              <th>Confidence Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for score, skill in result["prediction"] %}
+            <tr>
+              <td>{{ skill }}</td>
+              <td>{{ score }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div  class="div2">
+        <iframe src="{{result["file_path"]}}" type="application/pdf" frameborder="0"></iframe>
+      
+      </div>
+    </div> 
+  </div>
+  {% endif %}
+
+</body>
+</html>
